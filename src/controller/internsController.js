@@ -48,6 +48,10 @@ const createIntern = async function (req, res) {
       data.isDeleted=internDetail.isDeleted
     }
 
+    if(internDetail.collegeId){
+      data.collegeId=internDetail.collegeId
+    }
+
     const isEmailAlredayExist = await internModel.findOne({ email: email });
     if (isEmailAlredayExist) {
       return res
