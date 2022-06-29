@@ -23,6 +23,7 @@ const  createIntern= async function(req,res){
    if(!data.email){
     res.status(400).send({status:false,msg:"email is require"})
    }
+ 
 
    const email=data.email
    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))){
@@ -31,10 +32,12 @@ const  createIntern= async function(req,res){
    if(!data. mobile){
     res.status(400).send({status:false,msg:"mobile number must be present"})
    }
-   const mobile =data.mobile
-   if(!(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/.test(mobile))){
-    res.status(400).send({status:false,msg:"valid mobile number"})
+   const mobile=data.mobile
+   const mobileNumberAlready= await InterModel.findOne({mobile:mobile})
+   if(mobileNumberAlready){
+    res.status(400).send({status:false,msg:"mobile number already register"})
    }
+   
    
   
   const IsemailAlredayused= await InterModel.findOne({email:email});
