@@ -11,8 +11,14 @@ const createIntern = async function (req, res) {
     if (!internDetail.name) {
       return res.status(400).send({ status: false, msg: "name is required" });
     }
+    let name=internDetail.name
     if (typeof internDetail.name !== "string") {
-      return res.status(400).send({ status: false, msg: "Please enter valid name" });
+      return res.status(400).send({ status: false, msg: "Please enter name of string" });
+    }
+   
+    if(!validName.test(name)){
+        return res.status(400).send({status:false,message:"enter valid name"})
+
     }
     //    let internName=internDetail.name
     //    let name=Name.trim()
@@ -31,6 +37,7 @@ const createIntern = async function (req, res) {
     if (!internDetail.mobile) {
       return res.status(400).send({ status: false, msg: "mobile number is required" });
     }
+   
     //    const mobile =internDetail.mobile
     //    if(!(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/.test(mobile))){
     //    return res.status(400).send({status:false,msg:"valid mobile number"})
