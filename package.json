@@ -1,30 +1,9 @@
 {
-<<<<<<< HEAD
   "dependencies": {
     "body-parser": "^1.20.0",
-    "express": "^4.18.1",
-=======
-  "name": "open-to-intern-project",
-  "version": "1.0.0",
-  "description": "## Open to Intern Project Requirement",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aditisah/Open-to-Intern-Project.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/aditisah/Open-to-Intern-Project/issues"
-  },
-  "homepage": "https://github.com/aditisah/Open-to-Intern-Project#readme",
-  "dependencies": {
+    "email-validator": "^2.0.4",
     "express": "^4.18.1",
     "mongoose": "^6.4.1",
->>>>>>> f71805a70f7efc35a25ca191fd4ff00298c2653a
     "nodemon": "^2.0.18"
   }
 }
