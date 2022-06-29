@@ -7,6 +7,7 @@ const InterController = require("../controller/internsController")
 
 
 router.post("/functionup/colleges",collegeController.createCollege)
+router.get("/functionup/collegeDetails",collegeController.getCollegeWithInterns)
 router.post("/functionup/interns",InterController.createIntern)
 
 
