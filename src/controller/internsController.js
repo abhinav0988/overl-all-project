@@ -5,53 +5,61 @@ const createIntern = async function (req, res) {
     const internDetail = req.body;
     const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     const validName = /^[A-Za-z ]+$/;
+    const validMobile=/^[0-9]{10}$/
     if (Object.keys(internDetail).length === 0) {
-      return res.status(400).send({ status: false, msg: "Please provide intern details" });
+      return res
+        .status(400)
+        .send({ status: false, message: "Please provide intern details" });
     }
-    if (!internDetail.name) {
-      return res.status(400).send({ status: false, msg: "name is required" });
-    }
-    let name=internDetail.name
-    if (typeof internDetail.name !== "string") {
-      return res.status(400).send({ status: false, msg: "Please enter name of string" });
-    }
-   
-    if(!validName.test(name)){
-        return res.status(400).send({status:false,message:"enter valid name"})
+    const data={}
 
-    }
-    //    let internName=internDetail.name
-    //    let name=Name.trim()
+    const {name ,email ,mobile ,collegeId}=internDetail;
 
-    //    if(name!=Name){
-    //    return res.status(400).send({status:false, msg:"space not allowed"})
-    //    }
-    if (!internDetail.email) {
-      return res.status(400).send({ status: false, msg: "email is required" });
+    if (!name || typeof (name) !== "string") {
+      return res.status(400).send({ status: false, message: "name is required and type must be string" });
+    }else{data.name=name.trim()}
+
+    if (!validName.test(name)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter valid name " });
     }
 
-    const email = internDetail.email;
+    if (!email||typeof (email)!=="string") {
+      return res.status(400).send({ status: false, message: "email is required and type must be string" });
+    }else{data.email=email.trim()}
+
     if (!validEmail.test(email)) {
-      return res.status(400).send({ status: false, msg: "enter valid email id" });
+      return res
+        .status(400)
+        .send({ status: false, message: "enter valid email id" });
     }
-    if (!internDetail.mobile) {
-      return res.status(400).send({ status: false, msg: "mobile number is required" });
+
+    if (!mobile||typeof (mobile)!=="string") {
+      return res
+        .status(400)
+        .send({ status: false, message: "mobile number is required and type must be string" });
+    }else{data.mobile=mobile.trim()}
+ 
+    if(!validMobile.test(mobile)){
+        return res.status(400).send({status:false,message:"valid mobile number"})
     }
-   
-    //    const mobile =internDetail.mobile
-    //    if(!(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/.test(mobile))){
-    //    return res.status(400).send({status:false,msg:"valid mobile number"})
-    //    }
+    if(internDetail.isDeleted){
+      data.isDeleted=internDetail.isDeleted
+    }
 
     const isEmailAlredayExist = await internModel.findOne({ email: email });
     if (isEmailAlredayExist) {
-      return res.status(400).send({ status: false, msg: "email already registered" });
+      return res
+        .status(400)
+        .send({ status: false, message: "email already registered" });
     }
 
-    const interndata = await internModel.create(internDetail);
+
+    const interndata = await internModel.create(data);
     return res.status(201).send({ status: true, data: interndata });
   } catch (err) {
-    return res.status(500).send({ status: false, msg: err.message });
+    return res.status(500).send({ status: false, message: err.message });
   }
 };
 
