@@ -1,55 +1,51 @@
-const InterModel = require("../models/internModel")
+const internModel = require("../models/internModel");
 
-
-const  createIntern= async function(req,res){
-    try{
-    const data= req.body
-    if(Object.keys(data).length===0){
-        res.status(400).send({status:false, message:"body couldnot empty"})
+const createIntern = async function (req, res) {
+  try {
+    const internDetail = req.body;
+    const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const validName = /^[A-Za-z ]+$/;
+    if (Object.keys(internDetail).length === 0) {
+      return res.status(400).send({ status: false, msg: "Please provide intern details" });
     }
-    if(!data.name){
-        res.status(400).send({status:false, message:"name is required"})
+    if (!internDetail.name) {
+      return res.status(400).send({ status: false, msg: "name is required" });
     }
-    if(typeof data.name != "string"){
-        res.status(400).send({status:false, message:"name is the string require"})
+    if (typeof internDetail.name !== "string") {
+      return res.status(400).send({ status: false, msg: "Please enter valid name" });
     }
-   let Name=data.name
-   let name=Name.trim()
-  
+    //    let internName=internDetail.name
+    //    let name=Name.trim()
 
-   if(name!=Name){
-    res.status(400).send({status:false, message:"space not allowed"})
-   }
-   if(!data.email){
-    res.status(400).send({status:false, message:"email is require"})
-   }
- 
+    //    if(name!=Name){
+    //    return res.status(400).send({status:false, msg:"space not allowed"})
+    //    }
+    if (!internDetail.email) {
+      return res.status(400).send({ status: false, msg: "email is required" });
+    }
 
-   const email=data.email
-   if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))){
-    res.status(400).send({status:false, message:"enter valid email id"})
-   }
-   if(!data. mobile){
-    res.status(400).send({status:false, message:"mobile number must be present"})
-   }
- 
-   
-   
-  
-  const IsemailAlredayused= await InterModel.findOne({email:email});
-  if(IsemailAlredayused){
-    res.status(400).send({status:false, message:"email already registered"})
-    
+    const email = internDetail.email;
+    if (!validEmail.test(email)) {
+      return res.status(400).send({ status: false, msg: "enter valid email id" });
+    }
+    if (!internDetail.mobile) {
+      return res.status(400).send({ status: false, msg: "mobile number is required" });
+    }
+    //    const mobile =internDetail.mobile
+    //    if(!(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/.test(mobile))){
+    //    return res.status(400).send({status:false,msg:"valid mobile number"})
+    //    }
+
+    const isEmailAlredayExist = await internModel.findOne({ email: email });
+    if (isEmailAlredayExist) {
+      return res.status(400).send({ status: false, msg: "email already registered" });
+    }
+
+    const interndata = await internModel.create(internDetail);
+    return res.status(201).send({ status: true, data: interndata });
+  } catch (err) {
+    return res.status(500).send({ status: false, msg: err.message });
   }
-       
-     const interndata= await InterModel.create(data)
-     res.status(201).send({status:true, data:interndata})
+};
 
-}
-   catch(err){
-    res.status(500).send({status:false,message:err.message})
-
-   }
-}
-
-module.exports.createIntern=createIntern
+module.exports.createIntern = createIntern;
