@@ -1,8 +1,8 @@
 const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel")
 var validateUrl = function (url) {
-  var re = /^https?:\/\/.*\/.*\.(png|jpeg|jpg)\??.*$/gim;
-  return re.test(url);
+  var validlogoUrlregex = /^https?:\/\/.*\/.*\.(png|jpeg|jpg)\??.*$/gim;
+  return validlogoUrlregex.test(url);
 };
 
 const createCollege = async function (req, res) {
@@ -67,8 +67,7 @@ const getCollegeWithInterns = async function (req, res) {
     const college = await collegeModel.findOne({$and: [{ name: validCollegeAbbrviation, isDeleted: false }]}).select({ name: 1, fullName: 1, logoLink: 1 });
     console.log(college);
     if (!college) {
-      return res
-        .status(404)
+      return res .status(404)
         .send({ status: false, message: "College not found" });
     }
     const interns = await internModel

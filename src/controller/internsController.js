@@ -1,3 +1,4 @@
+const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel");
 
 const createIntern = async function (req, res) {
@@ -11,16 +12,14 @@ const createIntern = async function (req, res) {
     }
     const data={}
 
-    const {name ,email ,mobile }=internDetail;
+    const {name ,email ,mobile ,collegeName}=internDetail;
 
     if (!name || typeof (name) !== "string") {
       return res.status(400).send({ status: false, message: "name is required and type must be string" });
     }else{data.name=name.trim()}
 
     if (!validName.test(name)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Please enter valid name " });
+      return res.status(400).send({ status: false, message: "Please enter valid name " });
     }
 
     if (!email||typeof (email)!=="string") {
@@ -28,28 +27,26 @@ const createIntern = async function (req, res) {
     }else{data.email=email.trim()}
 
     if (!validEmail.test(email)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "enter valid email id" });
+      return res.status(400).send({ status: false, message: "enter valid email id" });
     }
 
     if (!mobile||typeof (mobile)!=="string") {
-      return res
-        .status(400)
-        .send({ status: false, message: "mobile number is required and type must be string" });
+      return res.status(400).send({ status: false, message: "mobile number is required and type must be string" });
     }else{data.mobile=mobile.trim()}
  
     if(!validMobile.test(mobile)){
         return res.status(400).send({status:false,message:"valid mobile number"})
     }
-    if(internDetail.isDeleted){
-      data.isDeleted=internDetail.isDeleted
-    }
 
-    if(internDetail.collegeId){
-      data.collegeId=internDetail.collegeId
+    if(collegeName){
+      // data.collegeName=internDetail.collegeName
+      const isCollegeExist = await collegeModel.findOne({name:collegeName});
+  if(!isCollegeExist){
+    return res.status(404).send({status: false, message: "college not found"})
+  }
+  data.collegeId = isCollegeExist._id;
     }
-
+  
     const isEmailAlredayExist = await internModel.findOne({ email: email });
     if (isEmailAlredayExist) {
       return res
@@ -57,7 +54,7 @@ const createIntern = async function (req, res) {
         .send({ status: false, message: "email already registered" });
     }
 
-
+    
     const interndata = await internModel.create(data);
     return res.status(201).send({ status: true, data: interndata });
   } catch (err) {
