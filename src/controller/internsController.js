@@ -7,13 +7,11 @@ const createIntern = async function (req, res) {
     const validName = /^[A-Za-z ]+$/;
     const validMobile=/^[0-9]{10}$/
     if (Object.keys(internDetail).length === 0) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Please provide intern details" });
+      return res.status(400).send({ status: false, message: "Please provide intern details" });
     }
     const data={}
 
-    const {name ,email ,mobile ,collegeId}=internDetail;
+    const {name ,email ,mobile }=internDetail;
 
     if (!name || typeof (name) !== "string") {
       return res.status(400).send({ status: false, message: "name is required and type must be string" });
