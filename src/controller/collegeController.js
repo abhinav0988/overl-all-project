@@ -91,7 +91,7 @@ const getCollegeWithInterns = async function (req, res) {
     if (Object.keys(collegeAbrv).length === 0 || !collegeAbrv.name) {
       return res.status(400).send({ status: false, message: "Please select name" });
     }
-    if(!validName.test(collegeAbrv)){
+    if(!validName.test(collegeAbrv.name)){
       return res
         .status(400)
         .send({ status: false, message: "Please select valid name" });
@@ -99,7 +99,7 @@ const getCollegeWithInterns = async function (req, res) {
     const validCollegeAbbrviation = collegeAbrv["name"].trim();
     const college = await collegeModel
       .findOne({ name: validCollegeAbbrviation, isDeleted: false})
-      .select({ name: 1, fullName: 1, logoLink: 1 });
+      .select({ name: 1,fullName: 1, logoLink: 1 });
     if (!college) {
       return res .status(404)
         .send({ status: false, message: "College not found" });
