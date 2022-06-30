@@ -15,7 +15,7 @@ const createIntern = async function (req, res) {
 
     const { name, email, mobile, collegeName } = internDetail;
 
-    if (!name) {
+    if (typeof name === "undefined" || name === null || !name) {
       return res.status(400).send({
         status: false,
         message: "Please enter name",
@@ -24,43 +24,39 @@ const createIntern = async function (req, res) {
     if (typeof name !== "string" || name.trim().length === 0) {
       return res.status(400).send({
         status: false,
-        message: "Type must be string",
+        message: "name's type must be string",
       });
     }
     if (!validName.test(name)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "Please enter valid name without digits and special characters",
-        });
+      return res.status(400).send({
+        status: false,
+        message:
+          "Please enter valid name without digits and special characters",
+      });
     }
 
     filteredInternDetail.name = name.trim();
-    if (!email) {
+    if (typeof email === "undefined" || email === null || !email) {
       return res.status(400).send({
         status: false,
-        message: "Please enter name",
+        message: "Please enter email",
       });
     }
     if (typeof email !== "string" || email.trim().length === 0) {
       return res.status(400).send({
         status: false,
-        message: "Type must be string",
+        message: "email's type must be string",
       });
     }
     if (!validEmail.test(email)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "Please enter valid name without digits and special characters",
-        });
+      return res.status(400).send({
+        status: false,
+        message:
+          "Please enter valid name without digits and special characters",
+      });
     }
     filteredInternDetail.email = email.trim();
-    if (!mobile) {
+    if (typeof mobile === "undefined" || mobile === null || !mobile) {
       return res.status(400).send({
         status: false,
         message: "Please enter mobile number",
@@ -69,7 +65,7 @@ const createIntern = async function (req, res) {
     if (typeof mobile !== "string" || mobile.trim().length === 0) {
       return res.status(400).send({
         status: false,
-        message: "Please Enter valid mobile no",
+        message: "Mobile type must be string",
       });
     }
     if (!validMobile.test(mobile)) {
@@ -79,7 +75,11 @@ const createIntern = async function (req, res) {
     }
     filteredInternDetail.mobile = mobile.trim();
 
-    if (!collegeName) {
+    if (
+      typeof collegeName === "undefined" ||
+      collegeName === null ||
+      !collegeName
+    ) {
       return res.status(400).send({
         status: false,
         message: "Please enter college name",
@@ -88,7 +88,7 @@ const createIntern = async function (req, res) {
     if (typeof collegeName !== "string" || collegeName.trim().length === 0) {
       return res.status(400).send({
         status: false,
-        message: "Type must be string",
+        message: "college name type must be string",
       });
     }
     if (!validName.test(collegeName)) {
@@ -100,7 +100,7 @@ const createIntern = async function (req, res) {
     }
     // fetch collegeId by collegeName given in request body
     const isCollegeExist = await collegeModel.findOne({
-      name: collegeName.trim(),
+      name: collegeName.trim().toLowerCase(),
       isDeleted: false,
     });
     if (!isCollegeExist) {
