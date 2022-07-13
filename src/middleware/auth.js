@@ -7,18 +7,21 @@ const authenticate= async function(req,res,next){
     try{
         
     const token= req.headers["x-api-key"]
-    const data=req.body
-    let user_id=data.userId
-
-    
+    const data  = req.body
+    const user = data.userId
     
     if(!token){
         res.status(400).send({status:false,msg:"Please enter token"})
     }
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
-    let userId=decodedtoken.userId
-    if(user_id!=userId){
-        return res.status(400).send({status:false,msg:"user  id not match"})
+
+    // let exp = decodedtoken.exp
+    // if(Date.now() == exp) return res.status.send({status : false, msg : "Your login session has expired, please login again."})
+
+    let userId = decodedtoken.userId
+
+    if(user){
+       if(user != userId) return res.status(400).send({status : false, msg : "UserId does not match!"})
     }
     
      if(!decodedtoken){
@@ -27,7 +30,7 @@ const authenticate= async function(req,res,next){
      next()
     }
     catch(error){
-        res.status(500).send({status:false ,message:error})
+        res.status(401).send({status:false ,message:error})
     }
 }
 
@@ -45,16 +48,13 @@ const authorize= async function(req,res,next){
 
         let decodedToken = JWT.verify(token, "Group-4")
         if(!decodedToken) return res.status(400).send({status : false, msg : "Token should be present!"})
-        //if (!valid.jwtValidation(decodedToken)) return res.status(400).send({ status: false, msg: "The token is invalid!!" });
 
         let userLoggedIn = decodedToken.userId
-       // console.log(userLoggedIn)
 
         let findUserId = await bookModel.findById(bookId)
         if(!findUserId) return res.status(404).send({status : false, msg : "No book found with this bookId"})
 
         let newUserId = findUserId.userId.toString()
-        //console.log(newUserId)
 
 
         if(userLoggedIn !== newUserId) return res.status(401).send({status : false, msg : "You're not authorized!"})
