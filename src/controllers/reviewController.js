@@ -39,7 +39,7 @@ const createReview = async function (req, res) {
     let reviewData = await reviewModel.create(data)
     let updated = await bookModel.findByIdAndUpdate(bookId, { $inc: { reviews: 1 },})
 
-    return res.status(201).send({ status: true, message: "Success", data: updated, reviewData});
+    return res.status(201).send({ status: true, message: "Success", data: reviewData});
 
   }catch(error){
     res.status(500).send({msg : error.message})
