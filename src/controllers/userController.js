@@ -1,14 +1,8 @@
 
 const userModel = require("../models/userModel")
-let validator = require("validator");
 const valid = require("../validator/validator")
 const jwt = require("jsonwebtoken")
 const passValidator = require('password-validator');
-
-
-
-
-
 
 
 const createUser = async function ( req,res ) {
