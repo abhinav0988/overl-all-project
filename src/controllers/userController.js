@@ -42,7 +42,7 @@ if(!['Miss','Mrs','Mr'].includes(data.title)){
 
 if(!name){
     return res.status(400).send({status:false,msg:"Please provide a name!"})
-}
+    }
 if(typeof name !== "string") return res.status(400).send({status : false, msg : "Data-type should be String only!"})
 if (!valid.reg(name))
 return res.status(400).send({ status: false, msg: "Please use only alphabets in name!" });
