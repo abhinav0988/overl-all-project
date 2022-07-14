@@ -24,7 +24,7 @@ router.put("/books/:bookId", MW.authenticate, MW.authorize, bookController.updat
 
 router.delete("/books/:bookId", MW.authenticate, MW.authorize, bookController.deleteBooks)
 
-router.post("/books/:bookId/review", reviewController.createReview)
+router.post("/books/:bookId/review", MW.authenticate, reviewController.createReview)
 
 router.put("/books/:bookId/review/:reviewId", MW.authenticate, MW.authorize, reviewController.updateReview)
 

@@ -15,8 +15,7 @@ const authenticate= async function(req,res,next){
     }
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
 
-    // let exp = decodedtoken.exp
-    // if(Date.now() == exp) return res.status.send({status : false, msg : "Your login session has expired, please login again."})
+    
 
     let userId = decodedtoken.userId
 

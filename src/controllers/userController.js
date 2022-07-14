@@ -14,18 +14,16 @@ const passValidator = require('password-validator');
 const createUser = async function ( req,res ) {
   try{
    let data = req.body
-   let {title,name,phone,email,password,} = data      //DESTRUCTURE
+   if(Object.keys(data).length==0){
+    return res.status(400).send({status : false, msg : "Body should not be empty!"})
+    }
+   //if(!data) return res.status(400).send({status : false, msg : "Please provide inputs!"})
+
+   let {title,name,phone,email,password} = data      //DESTRUCTURE
 
    let address = req.body.address
    let pincode = address.pincode
    if(typeof pincode !== "string") return res.status(400).send({status : false, msg : "Pincode should be in String!"})
-
-
-
-   if(Object.keys(data).length==0){
-   return res.status(400).send({status : false, msg : "Body should not be empty!"})
-   }
-   
 
 
 if(!title){
@@ -77,19 +75,19 @@ if(!regex1.test(email)){
 const emailcheck = data.email
 const emailvalidate = await userModel.findOne({email:emailcheck})
 if(emailvalidate){
-return res.status(400).send({status:false,msg:"This email already exists!"})
+return res.status(409).send({status:false,msg:"This email already exists!"})
 }
 
 
 
-let reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone);
-if (!reg) {
+let reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+if (!reg.test(phone)) {
 return res.status(400).send({ status: false, msg: "Invalid phone number!" });
 }
 const phoneNumber = data.phone
 const number = await userModel.findOne({phone:phoneNumber})
 if(number){
-return res.status(400).send({status:false,msg:"Phone number already exists!"})
+return res.status(409).send({status:false,msg:"Phone number already exists!"})
 }
 
 
@@ -118,6 +116,7 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
     try{
     const email= req.body.email
     const password= req.body.password
+
     if(!email){
       return res.status(400).send({status:false,message:"Please enter an email!"})
     }
@@ -138,7 +137,7 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
             batch : "radon",
             organisation : "Function-Up"
         },
-            "Group-4", {expiresIn : 120} 
+            "Group-4", {expiresIn : "12h"} 
             )
     //res.status(200).setHeader("x-api-key",token)
     res.status(200).send({status:true, data:token })

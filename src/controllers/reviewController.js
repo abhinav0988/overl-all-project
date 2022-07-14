@@ -2,6 +2,7 @@ const reviewModel = require("../models/reviewModel.js")
 const bookModel = require("../models/bookModel.js")
 const mongoose= require("mongoose")
 const moment = require("moment")
+const { findOne } = require("../models/userModel.js")
 
 
 
@@ -15,6 +16,9 @@ const createReview = async function (req, res) {
    
     let isValidbookID = mongoose.isValidObjectId(bookId); 
     if (!isValidbookID) return res.status(400).send({ status: false, msg: "Book Id is not valid!" });
+
+    let existBookId = await bookModel.findOne({_id : bookId})
+    if(!existBookId) return res.status(404).send({status : false, msg : "No such book found with this ID!"})
     
     let findBook = await bookModel.findOne({bookId: bookId, isDeleted: false,});
     if (!findBook) return res.status(404).send({status: false,message: "No such book found!"});
@@ -63,12 +67,16 @@ const createReview = async function (req, res) {
 const updateReview = async function (req, res){
     try{
         let bookId = req.params.bookId
+        let existBookId = await bookModel.findOne({_id : bookId})
+        if(!existBookId) return res.status(404).send({status : false, msg : "No such book found with this ID!"})
         let isValidbookID = mongoose.isValidObjectId(bookId); 
         if (!isValidbookID) return res.status(400).send({ status: false, msg: "Book Id is not valid!" })
 
         let reviewId = req.params.reviewId
         let isValidReviewID = mongoose.isValidObjectId(reviewId); 
         if (!isValidReviewID) return res.status(400).send({ status: false, msg: "Review Id is not valid!" });
+        // let existReviewId = await bookModel.findOne({_id : reviewId})
+        // if(!existReviewId) return res.status(404).send({status : false, msg : "No such review found with this ID!"})
 
         let review = req.body.review
         let rating = req.body.rating
@@ -111,14 +119,15 @@ const deleteReview = async function (req, res) {
         if (!isValidReviewID) return res.status(400).send({ status: false, msg: "Review Id is not valid!" });
 
         let bookIdCheck = await bookModel.findById({ _id: bookId });
-        if (!bookId) return res.status(404).send({ status: false, message: "BookId does not exist" });
+        if (!bookIdCheck) return res.status(404).send({ status: false, message: "BookId does not exist" });
 
 
         let reviewIdCheck = await reviewModel.findById({ _id: reviewId });
         if (!reviewId) return res.status(404).send({ status: false, message: "ReviewId does not exist" })
         
-        if (bookIdCheck.isDeleted == true || reviewIdCheck.isDeleted == true) return res.status(400).send({ status: false, message: "Book or Book review does not exist" })
-
+        if (bookIdCheck.isDeleted == true) return res.status(400).send({ status: false, message: "Book does not exist" })
+        if (bookIdCheck.isDeleted == true) return res.status(400).send({ status: false, message: "Book review does not exist" })
+ 
         if (reviewIdCheck.isDeleted == false) {
             let update = await reviewModel.findOneAndUpdate({ _id: reviewId },
                 {$set: { isDeleted: true }}, { new: true })
