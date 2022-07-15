@@ -13,8 +13,13 @@ const authenticate= async function(req,res,next){
     if(!token){
         res.status(400).send({status:false,msg:"Please enter token"})
     }
-    let decodedtoken = JWT.verify(token,"Group-4") //authentication
-
+    let decodedtoken = JWT.verify(token,"Group-4",function(error,decodedtoken){
+        if(error){
+        return res.status(401).send
+        }
+        req.userId=decodedtoken.userId
+    }) //authentication
+ 
     // let exp = decodedtoken.exp
     // if(Date.now() == exp) return res.status.send({status : false, msg : "Your login session has expired, please login again."})
 

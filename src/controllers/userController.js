@@ -69,7 +69,7 @@ if(!regex1.test(email)){
     return res.status(400).send({status:false,msg:"The email is invalid!"})
 }
 const emailcheck = data.email
-const emailvalidate = await userModel.findOne({email:emailcheck})
+const emailvalidate = await userModel.findOne({email})
 if(emailvalidate){
 return res.status(400).send({status:false,msg:"This email already exists!"})
 }
@@ -89,7 +89,7 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
 
 
    let savedData = await userModel.create(data);
-   res.status(201).send({msg:savedData});
+   res.status(201).send({status:true,msg:savedData});
    }catch (err) {
    res.status(500).send({ status: false, msg: err.message });
    }
