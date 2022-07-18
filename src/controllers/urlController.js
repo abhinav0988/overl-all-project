@@ -6,9 +6,13 @@ const shortenUrl = async function (req, res) {
   try {
     const longUrl = req.body.longUrl;
     const baseUrl = "http://localhost:3000/";
-    
-    if (Object.keys(longUrl).length === 0) {
+
+    if (Object.keys(req.body).length === 0) {
       res.status(400).send({ status: false, message: "Please provide url" });
+      return;
+    }
+    if (!longUrl || typeof longUrl == "undefined" || typeof longUrl == "null" || longUrl.trim().length==0) {
+      res.status(400).send({ status: false, message: "Please enter longUrl" });
       return;
     }
     if (!validUrl.isUri(longUrl)) {
@@ -19,13 +23,11 @@ const shortenUrl = async function (req, res) {
     }
     const isUrlShortened = await urlModel.findOne({ longUrl: longUrl });
     if (isUrlShortened) {
-      res
-        .status(400)
-        .send({
-          status: false,
-          message: "Given url already has been shortened!!",
-          shortUrl: isUrlShortened.shortUrl,
-        });
+      res.status(400).send({
+        status: false,
+        message: "Given url already has been shortened!!",
+        shortUrl: isUrlShortened.shortUrl,
+      });
       return;
     }
     const code = shortid.generate();
@@ -44,4 +46,31 @@ const shortenUrl = async function (req, res) {
   }
 };
 
+const getUrl = async (req, res) => {
+  try {
+    const url = req.params.urlCode;
+    const dbUrl = await urlModel.findOne({ urlCode: url });
+    if (dbUrl) {
+      return res.status(302).redirect(
+        dbUrl.longUrl
+        /*{
+				status: true,
+				data: dbUrl.longUrl,
+			}*/
+      );
+    } else {
+      return res.status(404).send({
+        status: false,
+        message: "url code is not found",
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      message: err.message,
+    });
+  }
+};
+
 module.exports.shortenUrl = shortenUrl;
+module.exports.getUrl = getUrl;
