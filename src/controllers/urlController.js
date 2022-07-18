@@ -4,7 +4,7 @@ const validUrl = require("valid-url");
 
 const shortenUrl = async function (req, res) {
   try {
-    const longUrl = req.body.longUrl;
+    const longUrl = req.body.longUrl.trim();
     const baseUrl = "http://localhost:3000/";
 
     if (Object.keys(req.body).length === 0) {
