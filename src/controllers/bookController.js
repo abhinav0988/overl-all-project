@@ -7,6 +7,11 @@ const reviewModel = require("../models/reviewModel")
 const createBook = async function (req, res) {
     try {
         let data = req.body
+        let file=req.file
+        if(file && file.length>0) var uploadedfileURL= await awsController.uploadfile([0])
+        data.bookcover=uploadedfileURL
+        data=JSON.parse(JSON.stringify(data))
+
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Please input data!" })
 
         let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data
@@ -20,6 +25,9 @@ const createBook = async function (req, res) {
 
 
         if (!userId) return res.status(400).send({ status: false, msg: "UserId should be present!" })
+        let chkUserId = await userModel.findOne({_id : userId})
+        if(!chkUserId) return res.status(409).send({status : false, msg : "UserId doesn't exist in the Database!"})
+
         let isValidId = mongoose.Types.ObjectId.isValid(userId)
         if (!isValidId) return res.status(400).send({ status: false, msg: "The userId provided is invalid!" })
 
@@ -50,7 +58,6 @@ const createBook = async function (req, res) {
         if (!isValidDateFormat(releasedAt)) return res.status(400).send({ status: false, msg: "Wrong date format!" })
 
         let bookCreated = await bookModel.create(data)
-        if (!bookCreated) res.status(404).send({ status: false, msg: "Book already exists!" })
 
         res.status(201).send({ status: true, msg: "Book created successfully!", bookCreated })
     } catch (error) {
@@ -71,7 +78,7 @@ const getBooks = async function (req, res) {
 
         if (!query) {
             let allBook = await bookModel.find({ isDeleted: false }).sort("title")
-            if (allBook.length == 0) return res.status(404).send({ status: false, message: "Book Not Found" })
+            if (allBook.length == 0) return res.status(404).send({ status: false, message: "Book/s Not Found" })
             return res.status(200).send({ status: true, message: "Books List", data: allBook })
         }
 
@@ -79,7 +86,7 @@ const getBooks = async function (req, res) {
             let id = query.userId
             let isValidId = mongoose.Types.ObjectId.isValid(id)
             if (!isValidId) return res.status(400).send({ status: false, msg: "The userId provided is invalid!" })
-            let user = await userModel.findById(id)
+            let user = await userModel.findById({_id : id})
             if (!user) { return res.status(404).send({ status: false, msg: "No book of such user" }) }
         }
 
@@ -144,7 +151,6 @@ const updateBooks = async function (req, res) {
         if (!isValidId) return res.status(400).send({ status: false, msg: "The bookId provided is invalid!" })
 
         let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
-
         if (!book) {
             return res.status(404).send({ status: false, message: "No books found with this bookId." })
         }
@@ -169,6 +175,11 @@ const updateBooks = async function (req, res) {
             if (ISBNpresent.length !== 0) {
                 return res.status(400).send({ status: false, message: "The ISBN is already taken!" })
             }
+            let isbnRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+        if (!isbnRegex.test(ISBN)) {
+            return res.status(400).send({ status: false, msg: "Please provide a valid ISBN!" })
+
+        }
             book.ISBN = ISBN;
         }
         book.save();
