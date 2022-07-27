@@ -1,6 +1,7 @@
 const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel");
 
+
 let validName = /^[A-Za-z]+$/;
 let validateUrl = function (url) {
   let validlogoUrlregex = /^https?:\/\/.*\/.*\.(png|jpeg|jpg)\??.*$/gim;
@@ -92,6 +93,7 @@ const createCollege = async function (req, res) {
 //API for fetching college details with its interns detail
 const getCollegeWithInterns = async function (req, res) {
   try {
+    res.setHeader("Access-Control-Allow-Origin","*")
     const collegeAbrv = req.query;
     if (Object.keys(collegeAbrv).length === 0 || !collegeAbrv.collegeName.trim()) {
       return res
@@ -117,6 +119,7 @@ const getCollegeWithInterns = async function (req, res) {
     }
     //Fetching details of the selected college's undeleted intern
     const interns = await internModel
+    
       .find({ collegeId: college._id, isDeleted: false })
       .select({ _id: 1, name: 1, email: 1, mobile: 1 });
     //if no intern found
